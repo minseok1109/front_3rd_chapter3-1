@@ -246,17 +246,203 @@ describe('getWeekDates', () => {
 });
 
 describe('getWeeksAtMonth', () => {
-  it('2024년 7월 1일의 올바른 주 정보를 반환해야 한다', () => {});
+  it('2024년 7월 1일의 올바른 주 정보를 반환해야 한다', () => {
+    // given
+    const date = new Date('2024-07-01');
+    // when
+    const weeks = getWeeksAtMonth(date);
+    // then
+    expect(weeks).toEqual([
+      [null, 1, 2, 3, 4, 5, 6],
+      [7, 8, 9, 10, 11, 12, 13],
+      [14, 15, 16, 17, 18, 19, 20],
+      [21, 22, 23, 24, 25, 26, 27],
+      [28, 29, 30, 31, null, null, null],
+    ]);
+  });
 });
 
 describe('getEventsForDay', () => {
-  it('특정 날짜(1일)에 해당하는 이벤트만 정확히 반환한다', () => {});
+  it('특정 날짜(1일)에 해당하는 이벤트만 정확히 반환한다', () => {
+    // given
+    const events: Event[] = [
+      {
+        id: 'event-1',
+        title: '팀 회의',
+        date: '2024-07-01',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '주간 팀 미팅',
+        location: '회의실 A',
+        category: '업무',
+        repeat: { type: 'weekly', interval: 1 },
+        notificationTime: 10,
+      },
+      {
+        id: 'event-2',
+        title: '점심 약속',
+        date: '2024-07-02',
+        startTime: '12:00',
+        endTime: '13:00',
+        description: '동료와 점심 식사',
+        location: '회사 근처 식당',
+        category: '개인',
+        repeat: { type: 'none', interval: 0 },
+        notificationTime: 5,
+      },
+      {
+        id: 'event-3',
+        title: '가족 모임',
+        date: '2024-07-03',
+        startTime: '18:00',
+        endTime: '20:00',
+        description: '월간 가족 저녁 식사',
+        location: '부모님 댁',
+        category: '가족',
+        repeat: { type: 'monthly', interval: 1, endDate: '2024-12-31' },
+        notificationTime: 60,
+      },
+      {
+        id: 'event-4',
+        title: '운동',
+        date: '2024-07-04',
+        startTime: '07:00',
+        endTime: '08:00',
+        description: '아침 운동',
+        location: '헬스장',
+        category: '개인',
+        repeat: { type: 'daily', interval: 1 },
+        notificationTime: 1,
+      },
+      {
+        id: 'event-5',
+        title: '프로젝트 미팅',
+        date: '2024-07-05',
+        startTime: '14:00',
+        endTime: '15:30',
+        description: '신규 프로젝트 킥오프',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'none', interval: 0 },
+        notificationTime: 30,
+      },
+    ];
 
-  it('해당 날짜에 이벤트가 없을 경우 빈 배열을 반환한다', () => {});
+    // when
+    const eventsForDay = getEventsForDay(events, 1);
+    // then
+    expect(eventsForDay).toEqual([
+      {
+        id: 'event-1',
+        title: '팀 회의',
+        date: '2024-07-01',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '주간 팀 미팅',
+        location: '회의실 A',
+        category: '업무',
+        repeat: { type: 'weekly', interval: 1 },
+        notificationTime: 10,
+      },
+    ]);
+  });
 
-  it('날짜가 0일 경우 빈 배열을 반환한다', () => {});
+  it('하루에 여러 이벤트가 있는 경우, 모든 이벤트를 반환한다', () => {
+    // given
+    const events: Event[] = [
+      {
+        id: 'event-1',
+        title: '팀 회의',
+        date: '2024-07-01',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '주간 팀 미팅',
+        location: '회의실 A',
+        category: '업무',
+        repeat: { type: 'weekly', interval: 1 },
+        notificationTime: 10,
+      },
+      {
+        id: 'event-2',
+        title: '점심 약속',
+        date: '2024-07-01',
+        startTime: '12:00',
+        endTime: '13:00',
+        description: '동료와 점심 식사',
+        location: '회사 근처 식당',
+        category: '개인',
+        repeat: { type: 'none', interval: 0 },
+        notificationTime: 5,
+      },
+      {
+        id: 'event-3',
+        title: '가족 모임',
+        date: '2024-07-01',
+        startTime: '18:00',
+        endTime: '20:00',
+        description: '월간 가족 저녁 식사',
+        location: '부모님 댁',
+        category: '가족',
+        repeat: { type: 'monthly', interval: 1, endDate: '2024-12-31' },
+        notificationTime: 60,
+      },
+      {
+        id: 'event-4',
+        title: '운동',
+        date: '2024-07-04',
+        startTime: '07:00',
+        endTime: '08:00',
+        description: '아침 운동',
+        location: '헬스장',
+        category: '개인',
+        repeat: { type: 'daily', interval: 1 },
+        notificationTime: 1,
+      },
+      {
+        id: 'event-5',
+        title: '프로젝트 미팅',
+        date: '2024-07-05',
+        startTime: '14:00',
+        endTime: '15:30',
+        description: '신규 프로젝트 킥오프',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'none', interval: 0 },
+        notificationTime: 30,
+      },
+    ];
+    // when
+    const eventsForDay = getEventsForDay(events, 1);
+    // then
+    expect(eventsForDay).toHaveLength(3);
+  });
 
-  it('날짜가 32일 이상인 경우 빈 배열을 반환한다', () => {});
+  it('해당 날짜에 이벤트가 없을 경우 빈 배열을 반환한다', () => {
+    // given
+    const events: Event[] = [];
+    // when
+    const eventsForDay = getEventsForDay(events, 11);
+    // then
+    expect(eventsForDay).toEqual([]);
+  });
+
+  it('날짜가 0일 경우 빈 배열을 반환한다', () => {
+    // given
+    const events: Event[] = [];
+    // when
+    const eventsForDay = getEventsForDay(events, 0);
+    // then
+    expect(eventsForDay).toEqual([]);
+  });
+
+  it('날짜가 32일 이상인 경우 빈 배열을 반환한다', () => {
+    // given
+    const events: Event[] = [];
+    // when
+    const eventsForDay = getEventsForDay(events, 32);
+    // then
+    expect(eventsForDay).toEqual([]);
+  });
 });
 
 describe('formatWeek', () => {
