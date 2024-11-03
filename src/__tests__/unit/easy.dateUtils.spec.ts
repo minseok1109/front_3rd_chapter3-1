@@ -60,7 +60,7 @@ describe('getDaysInMonth', () => {
     expect(daysInMonth).toBe(28);
   });
 
-  it('유효하지 않은 월에 대해 적절히 처리한다', () => {
+  it('유효하지 않은 월에 대해 0을 반환한다.', () => {
     // given
     const year = 2024;
     const month = 13;
@@ -71,10 +71,80 @@ describe('getDaysInMonth', () => {
     // then
     expect(daysInMonth).toBe(0);
   });
+
+  it('년도가 음수로 들어오면 0을 반환한다.', () => {
+    //given
+    const year = -2024;
+    const month = 12;
+    //when
+    const daysInMonth = getDaysInMonth(year, month);
+    //then
+    expect(daysInMonth).toBe(0);
+  });
+  it('월이 음수로 들어오면 0을 반환한다.', () => {
+    //given
+    const year = 2024;
+    const month = -12;
+    //when
+    const daysInMonth = getDaysInMonth(year, month);
+    //then
+    expect(daysInMonth).toBe(0);
+  });
+  it('연도에 너무 큰 값이 들어오면 0을 반환한다.', () => {
+    //given
+    const year = 9999;
+    const month = 12;
+    //when
+    const daysInMonth = getDaysInMonth(year, month);
+    //then
+    expect(daysInMonth).toBe(0);
+  });
+  it('연도에 너무 작은 값이 들어오면 0을 반환한다.', () => {
+    // given
+    const year = 1111;
+    const month = 12;
+    //when
+    const daysInMonth = getDaysInMonth(year, month);
+    //then
+    expect(daysInMonth).toBe(0);
+  });
+  it('정수가 아닌 숫자가 연도에 오면 0을 반환한다.', () => {
+    //given
+    const year = 2024.5;
+    const month = 11;
+    //when
+    const daysInMonth = getDaysInMonth(year, month);
+    //then
+    expect(daysInMonth).toBe(0);
+  });
+  it('정수가 아닌 숫자가 월에 오면 0을 반환한다.', () => {
+    //given
+    const year = 2024;
+    const month = 11.5;
+    //when
+    const daysInMonth = getDaysInMonth(year, month);
+    //then
+    expect(daysInMonth).toBe(0);
+  });
 });
 
 describe('getWeekDates', () => {
-  it('주중의 날짜(수요일)에 대해 올바른 주의 날짜들을 반환한다', () => {});
+  it('주중의 날짜(수요일)에 대해 올바른 주의 날짜들을 반환한다', () => {
+    //given
+    const date = new Date('2024-11-02');
+    //when
+    const weekDates = getWeekDates(date);
+    //then
+    expect(weekDates).toEqual([
+      new Date('2024-10-27'), // 일요일
+      new Date('2024-10-28'), // 월요일
+      new Date('2024-10-29'), // 화요일
+      new Date('2024-10-30'), // 수요일
+      new Date('2024-10-31'), // 목요일
+      new Date('2024-11-01'), // 금요일
+      new Date('2024-11-02'), // 토요일
+    ]);
+  });
 
   it('주의 시작(월요일)에 대해 올바른 주의 날짜들을 반환한다', () => {});
 

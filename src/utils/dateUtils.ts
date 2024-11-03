@@ -2,9 +2,30 @@ import { Event } from '../types.ts';
 
 /**
  * 주어진 년도와 월의 일수를 반환합니다.
+ * 유효하지 않은 입력값의 경우 0을 반환합니다.
  */
 export function getDaysInMonth(year: number, month: number): number {
-  return new Date(year, month, 0).getDate();
+  // 년도 검증
+  if (!Number.isInteger(year)) {
+    return 0;
+  }
+
+  // 월 검증 (1-12)
+  if (!Number.isInteger(month) || month < 1 || month > 12) {
+    return 0;
+  }
+
+  // 년도 범위 검증 (실용적인 범위 설정)
+  if (year < 1900 || year >= 9999) {
+    return 0;
+  }
+
+  const date = new Date(year, month, 0);
+  if (isNaN(date.getTime())) {
+    return 0;
+  }
+
+  return date.getDate();
 }
 
 /**
