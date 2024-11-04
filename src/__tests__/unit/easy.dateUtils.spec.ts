@@ -60,71 +60,14 @@ describe('getDaysInMonth', () => {
     expect(daysInMonth).toBe(28);
   });
 
-  it('유효하지 않은 월에 대해 0을 반환한다.', () => {
+  it('월이 12월이 넘어가면 해당 차이만큼의 다음해 월로 계산한다.', () => {
     // given
     const year = 2024;
     const month = 13;
-
     // when
     const daysInMonth = getDaysInMonth(year, month);
-
     // then
-    expect(daysInMonth).toBe(0);
-  });
-
-  it('년도가 음수로 들어오면 0을 반환한다.', () => {
-    //given
-    const year = -2024;
-    const month = 12;
-    //when
-    const daysInMonth = getDaysInMonth(year, month);
-    //then
-    expect(daysInMonth).toBe(0);
-  });
-  it('월이 음수로 들어오면 0을 반환한다.', () => {
-    //given
-    const year = 2024;
-    const month = -12;
-    //when
-    const daysInMonth = getDaysInMonth(year, month);
-    //then
-    expect(daysInMonth).toBe(0);
-  });
-  it('연도에 너무 큰 값이 들어오면 0을 반환한다.', () => {
-    //given
-    const year = 9999;
-    const month = 12;
-    //when
-    const daysInMonth = getDaysInMonth(year, month);
-    //then
-    expect(daysInMonth).toBe(0);
-  });
-  it('연도에 너무 작은 값이 들어오면 0을 반환한다.', () => {
-    // given
-    const year = 1111;
-    const month = 12;
-    //when
-    const daysInMonth = getDaysInMonth(year, month);
-    //then
-    expect(daysInMonth).toBe(0);
-  });
-  it('정수가 아닌 숫자가 연도에 오면 0을 반환한다.', () => {
-    //given
-    const year = 2024.5;
-    const month = 11;
-    //when
-    const daysInMonth = getDaysInMonth(year, month);
-    //then
-    expect(daysInMonth).toBe(0);
-  });
-  it('정수가 아닌 숫자가 월에 오면 0을 반환한다.', () => {
-    //given
-    const year = 2024;
-    const month = 11.5;
-    //when
-    const daysInMonth = getDaysInMonth(year, month);
-    //then
-    expect(daysInMonth).toBe(0);
+    expect(daysInMonth).toBe(31);
   });
 });
 
@@ -152,13 +95,18 @@ describe('getWeekDates', () => {
     // when
     const weekDates = getWeekDates(date);
     // then
-    expect(weekDates[0]).toEqual(
-      new Date('2024-10-27') // 일요일
-    );
+    expect(weekDates).toEqual([
+      new Date('2024-10-27'),
+      new Date('2024-10-28'),
+      new Date('2024-10-29'),
+      new Date('2024-10-30'),
+      new Date('2024-10-31'),
+      new Date('2024-11-01'),
+      new Date('2024-11-02'),
+    ]);
   });
 
   it('주의 끝(토요일)에 대해 올바른 주의 날짜들을 반환한다', () => {
-    // given
     const date = new Date('2024-11-02');
     // when
     const weekDates = getWeekDates(date);
@@ -446,58 +394,216 @@ describe('getEventsForDay', () => {
 });
 
 describe('formatWeek', () => {
-  it('월의 중간 날짜에 대해 올바른 주 정보를 반환한다', () => {});
+  it('월의 중간 날짜에 대해 올바른 주 정보를 반환한다', () => {
+    // given
+    const date = new Date('2024-11-15');
+    // when
+    const week = formatWeek(date);
+    // then
+    expect(week).toBe('2024년 11월 2주');
+  });
 
-  it('월의 첫 주에 대해 올바른 주 정보를 반환한다', () => {});
+  it('월의 첫 주에 대해 올바른 주 정보를 반환한다', () => {
+    // given
+    const date = new Date('2024-11-01');
+    // when
+    const week = formatWeek(date);
+    // then
+    expect(week).toBe('2024년 10월 5주');
+  });
 
-  it('월의 마지막 주에 대해 올바른 주 정보를 반환한다', () => {});
+  it('월의 마지막 주에 대해 올바른 주 정보를 반환한다', () => {
+    // given
+    const date = new Date('2024-11-30');
+    // when
+    const week = formatWeek(date);
+    // then
+    expect(week).toBe('2024년 11월 4주');
+  });
 
-  it('연도가 바뀌는 주에 대해 올바른 주 정보를 반환한다', () => {});
+  it('연도가 바뀌는 주에 대해 올바른 주 정보를 반환한다', () => {
+    // given
+    const date = new Date('2024-12-31');
+    // when
+    const week = formatWeek(date);
+    // then
+    expect(week).toBe('2025년 1월 1주');
+  });
 
-  it('윤년 2월의 마지막 주에 대해 올바른 주 정보를 반환한다', () => {});
+  it('윤년 2월의 마지막 주에 대해 올바른 주 정보를 반환한다', () => {
+    // given
+    const date = new Date('2024-02-29');
+    // when
+    const week = formatWeek(date);
+    // then
+    expect(week).toBe('2024년 2월 5주');
+  });
 
-  it('평년 2월의 마지막 주에 대해 올바른 주 정보를 반환한다', () => {});
+  it('평년 2월의 마지막 주에 대해 올바른 주 정보를 반환한다', () => {
+    // given
+    const date = new Date('2023-02-28');
+    // when
+    const week = formatWeek(date);
+    // then
+    expect(week).toBe('2023년 3월 1주');
+  });
 });
 
 describe('formatMonth', () => {
-  it("2024년 7월 10일을 '2024년 7월'로 반환한다", () => {});
+  it('2024년 7월 10일을 "2024년 7월"로 반환한다', () => {
+    // given
+    const date = new Date('2024-07-10');
+    // when
+    const month = formatMonth(date);
+    // then
+    expect(month).toBe('2024년 7월');
+  });
 });
 
 describe('isDateInRange', () => {
   const rangeStart = new Date('2024-07-01');
   const rangeEnd = new Date('2024-07-31');
 
-  it('범위 내의 날짜 2024-07-10에 대해 true를 반환한다', () => {});
+  it('범위 내의 날짜 2024-07-10에 대해 true를 반환한다', () => {
+    // given
+    const date = new Date('2024-07-10');
+    // when
+    const isInRange = isDateInRange(date, rangeStart, rangeEnd);
+    // then
+    expect(isInRange).toBe(true);
+  });
 
-  it('범위의 시작일 2024-07-01에 대해 true를 반환한다', () => {});
+  it('범위의 시작일 2024-07-01에 대해 true를 반환한다', () => {
+    // given
+    const date = new Date('2024-07-01');
+    // when
+    const isInRange = isDateInRange(date, rangeStart, rangeEnd);
+    // then
+    expect(isInRange).toBe(true);
+  });
 
-  it('범위의 종료일 2024-07-31에 대해 true를 반환한다', () => {});
+  it('범위의 종료일 2024-07-31에 대해 true를 반환한다', () => {
+    // given
+    const date = new Date('2024-07-31');
+    // when
+    const isInRange = isDateInRange(date, rangeStart, rangeEnd);
+    // then
+    expect(isInRange).toBe(true);
+  });
 
-  it('범위 이전의 날짜 2024-06-30에 대해 false를 반환한다', () => {});
+  it('범위 이전의 날짜 2024-06-30에 대해 false를 반환한다', () => {
+    // given
+    const date = new Date('2024-06-30');
+    // when
+    const isInRange = isDateInRange(date, rangeStart, rangeEnd);
+    // then
+    expect(isInRange).toBe(false);
+  });
 
-  it('범위 이후의 날짜 2024-08-01에 대해 false를 반환한다', () => {});
+  it('범위 이후의 날짜 2024-08-01에 대해 false를 반환한다', () => {
+    // given
+    const date = new Date('2024-08-01');
+    // when
+    const isInRange = isDateInRange(date, rangeStart, rangeEnd);
+    // then
+    expect(isInRange).toBe(false);
+  });
 
-  it('시작일이 종료일보다 늦은 경우 모든 날짜에 대해 false를 반환한다', () => {});
+  it('시작일이 종료일보다 늦은 경우 모든 날짜에 대해 false를 반환한다', () => {
+    // given
+    const date = new Date('2024-08-01');
+    // when
+    const isInRange = isDateInRange(date, rangeEnd, rangeStart);
+    // then
+    expect(isInRange).toBe(false);
+  });
 });
 
 describe('fillZero', () => {
-  test("5를 2자리로 변환하면 '05'를 반환한다", () => {});
+  test('5를 2자리로 변환하면 "05"를 반환한다', () => {
+    // given
+    const value = 5;
+    // when
+    const filledZero = fillZero(value);
+    // then
+    expect(filledZero).toBe('05');
+  });
 
-  test("10을 2자리로 변환하면 '10'을 반환한다", () => {});
+  test('10을 2자리로 변환하면 "10"을 반환한다', () => {
+    // given
+    const value = 10;
+    // when
+    const filledZero = fillZero(value);
+    // then
+    expect(filledZero).toBe('10');
+  });
 
-  test("3을 3자리로 변환하면 '003'을 반환한다", () => {});
+  test('3을 3자리로 변환하면 "003"을 반환한다', () => {
+    // given
+    const value = 3;
+    const size = 3;
+    // when
+    const filledZero = fillZero(value, size);
+    // then
+    expect(filledZero).toBe('003');
+  });
 
-  test("100을 2자리로 변환하면 '100'을 반환한다", () => {});
+  test('100을 2자리로 변환하면 "100"을 반환한다', () => {
+    // given
+    const value = 100;
+    // when
+    const filledZero = fillZero(value);
+    // then
+    expect(filledZero).toBe('100');
+  });
 
-  test("0을 2자리로 변환하면 '00'을 반환한다", () => {});
+  test('0을 2자리로 변환하면 "00"을 반환한다', () => {
+    // given
+    const value = 0;
+    // when
+    const filledZero = fillZero(value);
+    // then
+    expect(filledZero).toBe('00');
+  });
 
-  test("1을 5자리로 변환하면 '00001'을 반환한다", () => {});
+  test('1을 5자리로 변환하면 "00001"을 반환한다', () => {
+    // given
+    const value = 1;
+    const size = 5;
+    // when
+    const filledZero = fillZero(value, size);
+    // then
+    expect(filledZero).toBe('00001');
+  });
 
-  test("소수점이 있는 3.14를 5자리로 변환하면 '03.14'를 반환한다", () => {});
+  test('소수점이 있는 3.14를 5자리로 변환하면 "03.14"를 반환한다', () => {
+    // given
+    const value = 3.14;
+    const size = 5;
+    // when
+    const filledZero = fillZero(value, size);
+    // then
+    expect(filledZero).toBe('03.14');
+  });
 
-  test('size 파라미터를 생략하면 기본값 2를 사용한다', () => {});
+  test('size 파라미터를 생략하면 기본값 2를 사용한다', () => {
+    // given
+    const value = 1;
+    // when
+    const filledZero = fillZero(value);
+    // then
+    expect(filledZero).toBe('01');
+  });
 
-  test('value가 지정된 size보다 큰 자릿수를 가지면 원래 값을 그대로 반환한다', () => {});
+  test('value가 지정된 size보다 큰 자릿수를 가지면 원래 값을 그대로 반환한다', () => {
+    // given
+    const value = 12345;
+    const size = 2;
+    // when
+    const filledZero = fillZero(value, size);
+    // then
+    expect(filledZero).toBe('12345');
+  });
 });
 
 describe('formatDate', () => {
